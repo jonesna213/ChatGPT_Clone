@@ -1,20 +1,13 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import RootLayout from "./pages/Root";
-import ErrorPage from "./pages/Error";
-import HomePage from "./pages/Home";
+import ChatContainer from "./components/ChatBox/ChatContainer";
+import SideBar from "./components/SideBar/SideBar";
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <RootLayout />,
-        errorElement: <ErrorPage />,
-        children: [
-            { index: true, element: <HomePage /> }
-        ]
-    }
-]);
 const App = () => {
-    return <RouterProvider router={router} />;
+    return (
+        <div className="row w-100 h-100">
+            <SideBar />
+            <ChatContainer />
+        </div>
+    );
 }
 
 export default App;
