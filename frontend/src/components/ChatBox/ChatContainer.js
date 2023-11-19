@@ -4,15 +4,36 @@ import { useState } from "react";
 const ChatContainer = () => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
+    const [conversation, setConversation] = useState();
 
     const inputChangeHandler = value => {
         setUserInput(value);
     }
 
-    const submitHandler = event => {
+    const submitHandler = async event => {
         event.preventDefault();
-        const input = event.target.userInput.value;
+        const input = event.target.userInput.value.trim();
+
+        //Incase its an empty message
+        if (input.length === 0) {
+            setUserInput("");
+            return;
+        }
+
+        try {
+            const result = await fetch("http://localhost:8080/newConversation");
+
+            const resData = await result.json();
+
+            console.log("ResData: ", resData);
+
+        } catch (err) {
+            console.log(err);
+            return;
+        }
+
         setUserInput("");
+        setConversationStarted(true);
         console.log(input);
     }
 

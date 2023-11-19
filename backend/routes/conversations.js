@@ -5,11 +5,7 @@ const conversationsController = require("../controllers/conversations");
 
 const router = express.Router();
 
-router.post("newConversation", [
-    body("input")
-        .trim()
-        .not().isEmpty()
-], conversationsController.newConversation);
+router.get("/newConversation", conversationsController.newConversation);
 
 
 module.exports = router;

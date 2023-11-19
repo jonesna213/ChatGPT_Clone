@@ -14,7 +14,7 @@
 module.exports = class Conversation {
 
     constructor(messages, dateCreated) {
-        this.id = Math.random() * 1000;
+        this.id = Math.round(Math.random() * 1000); //not positive to be unique but works for these purposes
         this.messages = messages;
         this.dateCreated = dateCreated;
     }
