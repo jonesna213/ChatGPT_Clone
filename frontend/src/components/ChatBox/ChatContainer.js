@@ -4,7 +4,7 @@ import { useState } from "react";
 const ChatContainer = () => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
-    const [conversation, setConversation] = useState();
+    const [conversation, setConversation] = useState(null);
 
     const inputChangeHandler = value => {
         setUserInput(value);
@@ -21,10 +21,20 @@ const ChatContainer = () => {
         }
 
         try {
-            const result = await fetch("http://localhost:8080/newConversation");
+            const result = await fetch("http://localhost:8080/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: input,
+                    conversation
+                })
+            });
 
             const resData = await result.json();
-
+            setConversation(resData);
+            
             console.log("ResData: ", resData);
 
         } catch (err) {
@@ -34,7 +44,6 @@ const ChatContainer = () => {
 
         setUserInput("");
         setConversationStarted(true);
-        console.log(input);
     }
 
     return (
