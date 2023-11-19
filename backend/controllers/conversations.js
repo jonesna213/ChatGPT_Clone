@@ -14,11 +14,11 @@ exports.chat = async (req, res, next) => {
     message = { role: "user", content: message };
 
     let conversation = req.body.conversation;
-
+    
     if (!conversation) {
         const date = new Date().toLocaleDateString();
         conversation = new Conversation(false, [
-            { role: "system", content: "You are a helpful assistant." }
+            { role: "system", content: "You are a helpful assistant with the name JARVIS. You have a very dark sense of humor which can be seen in your replies." }
         ], date);
     } else {
         conversation = new Conversation(conversation.id, conversation.messages, conversation.dateCreated);

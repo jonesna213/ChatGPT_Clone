@@ -1,3 +1,5 @@
+import Robot from "../../assets/Robot";
+import User from "../../assets/User";
 import styles from "../../css/styles.module.css";
 import { useState } from "react";
 
@@ -34,8 +36,8 @@ const ChatContainer = () => {
 
             const resData = await result.json();
             setConversation(resData);
-            
-            console.log("ResData: ", resData);
+
+            localStorage.setItem("conversation", conversation);
 
         } catch (err) {
             console.log(err);
@@ -49,7 +51,27 @@ const ChatContainer = () => {
     return (
         <section className="col bg-dark text-white d-flex flex-column justify-content-between">
             {conversationStarted ? (
-                <h1>Conversation</h1>
+                <ul className="list-unstyled mx-auto w-50 mt-5">
+                    {conversation.messages.map(m => {
+                        return (
+                            <>
+                                {m.role === "assistant" && (
+                                    <li>
+                                        <Robot /> Jarvis
+                                        <p>{m.content}</p>
+                                    </li>
+                                )}
+                                {m.role === "user" && (
+                                    <li>
+                                        <User /> You
+                                        <p>{m.content}</p>
+                                    </li>
+                                )}
+                                
+                            </>
+                        );
+                    })}
+                </ul>
             ) : (
                 <div className={`row ${styles.startingMessage}`}>
                     <h3 className={`text-center`}>How can I assist you today?</h3>
@@ -65,7 +87,7 @@ const ChatContainer = () => {
                             value={userInput}
                             onChange={event => { inputChangeHandler(event.target.value) }}
                             className={`text-white form-control bg-dark ${styles.placeholderText}`}
-                            placeholder="Message ChatGPT..."
+                            placeholder="Message Jarvis..."
                         />
                         <button className="btn btn-outline-light" type="submit">
                             Send
