@@ -7,3 +7,15 @@
     background: #4c5258;
 }
 
+.prevConversation:hover {
+    background: #4c5258;
+    border-radius: 0.5rem;
+}
+
+.placeholderText::placeholder {
+    color: rgb(109, 109, 109);
+}
+
+.startingMessage {
+    margin-top: 25rem;
+}
