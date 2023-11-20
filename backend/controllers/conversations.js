@@ -11,24 +11,25 @@ exports.chat = async (req, res, next) => {
         throw error;
     }
 
-    message = { role: "user", content: message };
-
-    let conversation = req.body.conversation;
-    
-    if (!conversation) {
-        const date = new Date().toLocaleDateString();
-        conversation = new Conversation(false, [
-            { role: "system", content: "You are a helpful assistant with the name JARVIS. You have a very dark sense of humor which can be seen in your replies." }
-        ], date);
-    } else {
-        conversation = new Conversation(conversation.id, conversation.messages, conversation.dateCreated);
-    }
-
-    conversation.addMessage(message);
-
     const openai = new OpenAI({
         apiKey: process.env.OPENAIAPIKEY
     });
+
+    message = { role: "user", content: message };
+
+    let conversation = req.body.conversation;
+
+    if (!conversation) {
+        const date = new Date().toLocaleDateString();
+
+        conversation = new Conversation(false, [
+            { role: "system", content: "You are a helpful assistant with the name JARVIS. You have a very dark sense of humor which can be seen in your replies." }
+        ], date, "Unnamed chat");
+    } else {
+        conversation = new Conversation(conversation.id, conversation.messages, conversation.dateCreated, conversation.name);
+    }
+
+    conversation.addMessage(message);
 
     const response = await openai.chat.completions.create({
         messages: conversation.messages,
@@ -38,5 +39,6 @@ exports.chat = async (req, res, next) => {
 
     conversation.addMessage(response.choices[0].message);
 
+    console.log("converstaion", conversation);
     res.send(conversation);
 }

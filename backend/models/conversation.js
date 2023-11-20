@@ -13,7 +13,7 @@
 
 module.exports = class Conversation {
 
-    constructor(id, messages, dateCreated) {
+    constructor(id, messages, dateCreated, name) {
         if (!id) {
             this.id = Math.round(Math.random() * 1000); //not positive to be unique but works for these purposes
         } else {
@@ -22,6 +22,7 @@ module.exports = class Conversation {
         
         this.messages = messages;
         this.dateCreated = dateCreated;
+        this.name = name;
     }
 
     /**

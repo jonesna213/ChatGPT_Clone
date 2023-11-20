@@ -15,6 +15,7 @@ const ChatContainer = () => {
     const submitHandler = async event => {
         event.preventDefault();
         const input = event.target.userInput.value.trim();
+        console.log(input);
 
         //Incase its an empty message
         if (input.length === 0) {
@@ -35,10 +36,37 @@ const ChatContainer = () => {
             });
 
             const resData = await result.json();
+
             setConversation(resData);
 
-            localStorage.setItem("conversation", conversation);
 
+
+            localStorage.setItem("conversation", JSON.stringify(resData));
+
+            const chats = JSON.parse(localStorage.getItem("chats")) || [];
+
+
+            //if there are chats
+            if (chats.length !== 0) {
+                const isSaved = chats.filter(convo => convo.id === resData.id);
+
+                //if the current conversation is not already in the chats array 
+                if (isSaved.length === 0) {
+                    chats.push(resData);
+                    localStorage.setItem("chats", JSON.stringify(chats));
+
+                    console.log("chats when isSaved is true: ", chats);
+                } else {
+                    const updatedChats = chats.filter(convo => convo.id !== resData.id);
+                    updatedChats.push(resData);
+                    localStorage.setItem("chats", JSON.stringify(updatedChats));
+                    console.log("chats when isSaved is false: ", updatedChats);
+                }
+            } else {
+                const updatedChats = [];
+                updatedChats.push(resData);
+                localStorage.setItem("chats", JSON.stringify(updatedChats));
+            }
         } catch (err) {
             console.log(err);
             return;
@@ -54,21 +82,21 @@ const ChatContainer = () => {
                 <ul className="list-unstyled mx-auto w-50 mt-5">
                     {conversation.messages.map(m => {
                         return (
-                            <>
+                            <li key={m.content.length}>
                                 {m.role === "assistant" && (
-                                    <li>
+                                    <>
                                         <Robot /> Jarvis
                                         <p>{m.content}</p>
-                                    </li>
+                                    </>
                                 )}
                                 {m.role === "user" && (
-                                    <li>
+                                    <>
                                         <User /> You
                                         <p>{m.content}</p>
-                                    </li>
+                                    </>
                                 )}
-                                
-                            </>
+
+                            </li>
                         );
                     })}
                 </ul>
