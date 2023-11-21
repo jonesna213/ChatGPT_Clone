@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PencilSquare from "../../assets/PencilSquare";
 import styles from "../../css/styles.module.css";
+import ThreeDots from "../../assets/ThreeDots";
 
-const SideBar = () => {
-    const storedChats = localStorage.getItem("chats");
-    const initialChats = storedChats ? JSON.parse(storedChats) : [];
-
-    const [chats, setChats] = useState(initialChats);
-
+const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
     useEffect(() => {
         const handleStorageChange = () => {
             console.log("localStorage changed");
             const updatedChats = localStorage.getItem("chats");
             console.log("updatedChats:", updatedChats);
-            setChats(updatedChats ? JSON.parse(updatedChats) : []);
+            setCurrentConversation(null); // Reset current conversation
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -21,8 +17,11 @@ const SideBar = () => {
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [setCurrentConversation]);
 
+    const openEditConversation = () => {
+
+    }
 
     return (
         <section className="col-2 text-white h-100">
@@ -39,7 +38,17 @@ const SideBar = () => {
                         return (
                             <div className="ms-1" key={convo.dateCreated + convo.messages[0].length}>
                                 <p className="ms-2 text-light-emphasis small mb-0">{convo.dateCreated}</p>
-                                <a className={`ps-2 py-1 d-block text-decoration-none text-white ${styles.prevConversation}`} href="w">{convo.name}</a>
+
+                                {currentConversation && currentConversation.id === convo.id ? (
+                                    <div className={`d-flex justify-content-between align-items-center ps-2 my-1 text-white ${styles.currentConversation}`}>
+                                        {convo.name}
+                                        <button onClick={openEditConversation} className={`btn ${styles.threeDotsButton}`}>
+                                            <ThreeDots />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <a className={`ps-2 py-1 my-1 d-block text-decoration-none text-white ${styles.prevConversation}`} href="w">{convo.name}</a>
+                                )}
                             </div>
                         );
                     })}

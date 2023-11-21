@@ -7,6 +7,15 @@
     background: #4c5258;
 }
 
+.threeDotsButton:hover {
+    background: #2f3236;
+}
+
+.currentConversation {
+    background: #4c5258;
+    border-radius: 0.5rem;
+}
+
 .prevConversation:hover {
     background: #4c5258;
     border-radius: 0.5rem;

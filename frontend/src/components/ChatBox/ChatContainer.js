@@ -3,10 +3,10 @@ import User from "../../assets/User";
 import styles from "../../css/styles.module.css";
 import { useState } from "react";
 
-const ChatContainer = () => {
+const ChatContainer = ({ currentConversation, updateChats, setCurrentConversation }) => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
-    const [conversation, setConversation] = useState(null);
+    const [conversation, setConversation] = useState(currentConversation);
 
     const inputChangeHandler = value => {
         setUserInput(value);
@@ -38,6 +38,7 @@ const ChatContainer = () => {
             const resData = await result.json();
 
             setConversation(resData);
+            setCurrentConversation(resData);
 
 
 
@@ -45,27 +46,21 @@ const ChatContainer = () => {
 
             const chats = JSON.parse(localStorage.getItem("chats")) || [];
 
-
             //if there are chats
             if (chats.length !== 0) {
-                const isSaved = chats.filter(convo => convo.id === resData.id);
+                updateChats(chats => {
+                    const isSaved = chats.find(convo => convo.id === resData.id);
 
-                //if the current conversation is not already in the chats array 
-                if (isSaved.length === 0) {
-                    chats.push(resData);
-                    localStorage.setItem("chats", JSON.stringify(chats));
-
-                    console.log("chats when isSaved is true: ", chats);
-                } else {
-                    const updatedChats = chats.filter(convo => convo.id !== resData.id);
-                    updatedChats.push(resData);
-                    localStorage.setItem("chats", JSON.stringify(updatedChats));
-                    console.log("chats when isSaved is false: ", updatedChats);
-                }
+                    if (!isSaved) {
+                        return [...chats, resData];
+                    } else {
+                        return chats.map(convo => (convo.id === resData.id ? resData : convo));
+                    }
+                });
             } else {
                 const updatedChats = [];
                 updatedChats.push(resData);
-                localStorage.setItem("chats", JSON.stringify(updatedChats));
+                updateChats(updatedChats);
             }
         } catch (err) {
             console.log(err);
