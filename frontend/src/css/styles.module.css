@@ -11,10 +11,6 @@
     background: #2f3236;
 }
 
-.editMenu {
-    
-}
-
 .editMenu li {
     background: none;
     color: white;
@@ -41,4 +37,9 @@
 
 .startingMessage {
     margin-top: 25rem;
+}
+
+.scrollableConversation {
+    max-height: 700px;
+    overflow-y: auto;
 }

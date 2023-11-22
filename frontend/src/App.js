@@ -7,22 +7,27 @@ const App = () => {
     const [chats, setChats] = useState(JSON.parse(localStorage.getItem("chats")) || []);
     const [currentConversation, setCurrentConversation] = useState(null);
 
-    const updateChats = (newChats) => {
+    const updateChats = newChats => {
         setChats(newChats);
         localStorage.setItem("chats", JSON.stringify(newChats));
     };
+
+    const updateCurrentConversation = conversation => {
+        setCurrentConversation(conversation);
+        localStorage.setItem("conversation", JSON.stringify(conversation));
+    }
 
     return (
         <div className={`row ${styles.wrapper}`}>
             <SideBar
                 chats={chats}
-                setCurrentConversation={setCurrentConversation}
+                setCurrentConversation={updateCurrentConversation}
                 currentConversation={currentConversation}
             />
             <ChatContainer
                 currentConversation={currentConversation}
                 updateChats={updateChats}
-                setCurrentConversation={setCurrentConversation}
+                setCurrentConversation={updateCurrentConversation}
             />
         </div>
     );

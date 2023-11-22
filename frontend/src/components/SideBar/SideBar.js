@@ -32,7 +32,7 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
         setIsEditMenuOpen(!isEditMenuOpen);
     };
 
-    const handleEditMenuOptionClick = (option) => {
+    const handleEditMenuOptionClick = option => {
         // Implement logic for each menu option (e.g., delete or rename)
         if (option === 'delete') {
             // Handle delete logic
@@ -49,16 +49,15 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
     return (
         <section className="col-2 text-white h-100">
             <div className="m-3">
-                <button type="button" className={`d-flex justify-content-between align-items-center w-100 ${styles.newChat} btn text-white fw-bold`}>
+                <button onClick={() => setCurrentConversation(null)} type="button" className={`d-flex justify-content-between align-items-center w-100 ${styles.newChat} btn text-white fw-bold`}>
                     New Chat
                     <PencilSquare />
                 </button>
 
                 <section className="mt-4">
                     {chats.map(convo => {
-                        console.log("convo: ", convo);
                         return (
-                            <div className="ms-1" key={convo.dateCreated + convo.messages[0].length}>
+                            <div className="ms-1" key={convo.id}>
                                 <p className="ms-2 text-light-emphasis small mb-0">{convo.dateCreated}</p>
 
                                 {currentConversation && currentConversation.id === convo.id ? (
@@ -94,7 +93,7 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <a className={`ps-2 py-1 my-1 d-block text-decoration-none text-white ${styles.prevConversation}`} href="w">{convo.name}</a>
+                                    <button className={`btn w-100 text-start ps-2 py-1 my-1 d-block text-decoration-none text-white ${styles.prevConversation}`} onClick={() => setCurrentConversation(convo)}>{convo.name}</button>
                                 )}
                             </div>
                         );

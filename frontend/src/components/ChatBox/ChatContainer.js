@@ -1,12 +1,16 @@
 import Robot from "../../assets/Robot";
 import User from "../../assets/User";
 import styles from "../../css/styles.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ChatContainer = ({ currentConversation, updateChats, setCurrentConversation }) => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
-    const [conversation, setConversation] = useState(currentConversation);
+
+    useEffect(() => {
+        setConversationStarted(!!currentConversation);
+    }, [currentConversation]);
+    
 
     const inputChangeHandler = value => {
         setUserInput(value);
@@ -31,33 +35,33 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
                 },
                 body: JSON.stringify({
                     message: input,
-                    conversation
+                    currentConversation
                 })
             });
 
             const resData = await result.json();
 
-            setConversation(resData);
             setCurrentConversation(resData);
-
-
 
             localStorage.setItem("conversation", JSON.stringify(resData));
 
             const chats = JSON.parse(localStorage.getItem("chats")) || [];
-
+            console.log("chats", chats);
             //if there are chats
             if (chats.length !== 0) {
-                updateChats(chats => {
-                    const isSaved = chats.find(convo => convo.id === resData.id);
-
-                    if (!isSaved) {
-                        return [...chats, resData];
-                    } else {
-                        return chats.map(convo => (convo.id === resData.id ? resData : convo));
-                    }
-                });
+                let updatedChats;
+                const isSaved = chats.find(convo => convo.id === resData.id);
+                console.log("isSaved", isSaved);
+                if (!isSaved) {
+                    console.log("inside !isSaved");
+                    updatedChats = [...chats, resData];
+                } else {
+                    console.log("inside else");
+                    updatedChats = chats.map(convo => (convo.id === resData.id ? resData : convo));
+                }
+                updateChats(updatedChats);
             } else {
+                console.log("inside there are no chats");
                 const updatedChats = [];
                 updatedChats.push(resData);
                 updateChats(updatedChats);
@@ -73,9 +77,9 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
 
     return (
         <section className="col bg-dark text-white d-flex flex-column justify-content-between">
-            {conversationStarted ? (
-                <ul className="list-unstyled mx-auto w-50 mt-5">
-                    {conversation.messages.map(m => {
+            {conversationStarted && currentConversation ? (
+                <ul className={`list-unstyled mx-auto w-50 mt-5 ${styles.scrollableConversation}`}>
+                    {currentConversation.messages.map(m => {
                         return (
                             <li key={m.content.length}>
                                 {m.role === "assistant" && (
