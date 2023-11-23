@@ -20,6 +20,7 @@ const App = () => {
     return (
         <div className={`row ${styles.wrapper}`}>
             <SideBar
+                updateChats={updateChats}
                 chats={chats}
                 setCurrentConversation={updateCurrentConversation}
                 currentConversation={currentConversation}

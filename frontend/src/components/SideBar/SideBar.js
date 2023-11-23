@@ -5,8 +5,10 @@ import ThreeDots from "../../assets/ThreeDots";
 import Pencil from "../../assets/Pencil";
 import TrashCan from "../../assets/TrashCan";
 
-const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
+const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversation }) => {
     const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
+    const [isRenameMenuOpen, setIsRenameMenuOpen] = useState(false);
+    const [renameInput, setRenameInput] = useState(currentConversation ? currentConversation.name : "");
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -24,27 +26,56 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
     }, [setCurrentConversation]);
 
     /*
-        Dont need to worry aobut ids because the ... only pops up for the current conversation
+        Don't need to worry about ids because the ... only pops up for the current conversation
     */
-    const handleEditButtonClick = event => {
-        event.stopPropagation();
-
+    const handleEditButtonClick = () => {
         setIsEditMenuOpen(!isEditMenuOpen);
     };
 
     const handleEditMenuOptionClick = option => {
-        // Implement logic for each menu option (e.g., delete or rename)
+        // Whichever option was clicked, either delete or open rename menu for the current conversation
         if (option === 'delete') {
-            // Handle delete logic
-            console.log('Delete clicked for conversation:', currentConversation);
+            const updatedChats = chats.filter(convo => convo.id !== currentConversation.id);
+            updateChats(updatedChats);
+            setCurrentConversation(null);
         } else if (option === 'rename') {
-            // Handle rename logic
-            console.log('Rename clicked for conversation:', currentConversation);
+            setIsRenameMenuOpen(true);
         }
 
-        // Close the edit menu after handling the option
         setIsEditMenuOpen(false);
     };
+
+    const openRenameMenu = () => {
+        if (renameInput !== currentConversation.name) {
+            const updatedChats = chats.map(convo => {
+                if (convo.id === currentConversation.id) {
+                    convo.name = renameInput;
+                }
+                return convo;
+            });
+
+            updateChats(updatedChats);
+        }
+        setIsRenameMenuOpen(false);
+    }
+
+    const handleInputChange = event => {
+        setRenameInput(event.target.value);
+    }
+
+    const handleRenameSubmit = event => {
+        if (event.key === "Enter") {
+            const updatedChats = chats.map(convo => {
+                if (convo.id === currentConversation.id) {
+                    convo.name = renameInput;
+                }
+                return convo;
+            });
+
+            updateChats(updatedChats);
+            setIsRenameMenuOpen(false);
+        }
+    }
 
     return (
         <section className="col-2 text-white h-100">
@@ -62,7 +93,11 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
 
                                 {currentConversation && currentConversation.id === convo.id ? (
                                     <div className={`d-flex justify-content-between align-items-center ps-2 my-1 text-white ${styles.currentConversation}`}>
-                                        {convo.name}
+                                        {isRenameMenuOpen ? (
+                                            <input type="text" name="renameConversationInput" value={renameInput} onChange={handleInputChange} className={`${styles.renameInput} text-white`} onBlur={openRenameMenu} autoFocus onKeyDown={handleRenameSubmit} />
+                                        ) : (
+                                            convo.name
+                                        )}
                                         <div className="position-relative">
                                             <button onClick={handleEditButtonClick} className={`btn ${styles.threeDotsButton}`}>
                                                 <ThreeDots />
@@ -93,7 +128,7 @@ const SideBar = ({ chats, setCurrentConversation, currentConversation }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <button className={`btn w-100 text-start ps-2 py-1 my-1 d-block text-decoration-none text-white ${styles.prevConversation}`} onClick={() => setCurrentConversation(convo)}>{convo.name}</button>
+                                    <button className={`btn w-100 text-start ps-2 py-1 my-1 d-block text-decoration-none text-white ${styles.prevConversation}`} onClick={() => { setCurrentConversation(convo); setRenameInput(convo.name);}}>{convo.name}</button>
                                 )}
                             </div>
                         );

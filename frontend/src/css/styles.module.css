@@ -41,5 +41,15 @@
 
 .scrollableConversation {
     max-height: 700px;
+    padding-left: 1rem;
+    padding-right: 1rem;
     overflow-y: auto;
+}
+
+.renameInput:focus {
+    background: #4c5258;
+    border-color: #406de9;
+    border-width: 2px;
+    outline-style: solid;
+    border-radius: 0.25rem;
 }
