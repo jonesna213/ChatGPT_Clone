@@ -1,3 +1,4 @@
+import Loading from "../../assets/Loading";
 import Robot from "../../assets/Robot";
 import User from "../../assets/User";
 import styles from "../../css/styles.module.css";
@@ -6,11 +7,11 @@ import { useEffect, useState } from "react";
 const ChatContainer = ({ currentConversation, updateChats, setCurrentConversation }) => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setConversationStarted(!!currentConversation);
     }, [currentConversation]);
-    
 
     const inputChangeHandler = value => {
         setUserInput(value);
@@ -18,12 +19,31 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
 
     const submitHandler = async event => {
         event.preventDefault();
-        const input = event.target.userInput.value.trim();
-        console.log(input);
+
+        if (!conversationStarted) {
+            console.log("test", currentConversation);
+            console.log("started", conversationStarted);
+            setCurrentConversation({
+                messages: [
+                    { role: "user", content: userInput }
+                ]
+            });
+            setConversationStarted(true);
+        } else {
+            let updatedConvo = currentConversation;
+            const updatedMessages = updatedConvo.messages;
+            updatedMessages.push({role: "user", content: userInput});
+            updatedConvo.messages = updatedMessages;
+            setCurrentConversation(updatedConvo);
+        }
+
+        setIsLoading(true);
+        console.log(userInput);
 
         //Incase its an empty message
-        if (input.length === 0) {
+        if (userInput.length === 0) {
             setUserInput("");
+            setIsLoading(false);
             return;
         }
 
@@ -34,11 +54,11 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    message: input,
-                    currentConversation
+                    message: userInput,
+                    conversation: currentConversation
                 })
             });
-
+            
             const resData = await result.json();
 
             setCurrentConversation(resData);
@@ -51,17 +71,13 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
             if (chats.length !== 0) {
                 let updatedChats;
                 const isSaved = chats.find(convo => convo.id === resData.id);
-                console.log("isSaved", isSaved);
                 if (!isSaved) {
-                    console.log("inside !isSaved");
                     updatedChats = [...chats, resData];
                 } else {
-                    console.log("inside else");
                     updatedChats = chats.map(convo => (convo.id === resData.id ? resData : convo));
                 }
                 updateChats(updatedChats);
             } else {
-                console.log("inside there are no chats");
                 const updatedChats = [];
                 updatedChats.push(resData);
                 updateChats(updatedChats);
@@ -71,8 +87,8 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
             return;
         }
 
+        setIsLoading(false);
         setUserInput("");
-        setConversationStarted(true);
     }
 
     return (
@@ -81,7 +97,7 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
                 <ul className={`list-unstyled mx-auto w-50 mt-5 ${styles.scrollableConversation}`}>
                     {currentConversation.messages.map(m => {
                         return (
-                            <li key={m.content.length}>
+                            <li key={m.content.length + Math.random()}>
                                 {m.role === "assistant" && (
                                     <>
                                         <Robot /> Jarvis
@@ -98,6 +114,14 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
                             </li>
                         );
                     })}
+                    {isLoading && (
+                        <>
+                            <li key="inProgressMessageRobot">
+                                <Robot /> Jarvis
+                                <Loading />
+                            </li>
+                        </>
+                    )}
                 </ul>
             ) : (
                 <div className={`row ${styles.startingMessage}`}>

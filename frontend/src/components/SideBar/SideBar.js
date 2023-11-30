@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PencilSquare from "../../assets/PencilSquare";
 import styles from "../../css/styles.module.css";
 import ThreeDots from "../../assets/ThreeDots";
@@ -9,21 +9,6 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
     const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
     const [isRenameMenuOpen, setIsRenameMenuOpen] = useState(false);
     const [renameInput, setRenameInput] = useState(currentConversation ? currentConversation.name : "");
-
-    useEffect(() => {
-        const handleStorageChange = () => {
-            console.log("localStorage changed");
-            const updatedChats = localStorage.getItem("chats");
-            console.log("updatedChats:", updatedChats);
-            setCurrentConversation(null); // Reset current conversation
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, [setCurrentConversation]);
 
     /*
         Don't need to worry about ids because the ... only pops up for the current conversation
@@ -80,7 +65,7 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
     return (
         <section className="col-2 text-white h-100">
             <div className="m-3">
-                <button onClick={() => setCurrentConversation(null)} type="button" className={`d-flex justify-content-between align-items-center w-100 ${styles.newChat} btn text-white fw-bold`}>
+                <button onClick={() => { setCurrentConversation(null); setRenameInput("Unnamed chat");}} type="button" className={`d-flex justify-content-between align-items-center w-100 ${styles.newChat} btn text-white fw-bold`}>
                     New Chat
                     <PencilSquare />
                 </button>

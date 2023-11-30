@@ -15,7 +15,7 @@ const App = () => {
     const updateCurrentConversation = conversation => {
         setCurrentConversation(conversation);
         localStorage.setItem("conversation", JSON.stringify(conversation));
-    }
+    };
 
     return (
         <div className={`row ${styles.wrapper}`}>

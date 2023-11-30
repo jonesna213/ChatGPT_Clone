@@ -25,11 +25,11 @@ exports.chat = async (req, res, next) => {
         conversation = new Conversation(false, [
             { role: "system", content: "You are a helpful assistant with the name JARVIS. You have a very dark sense of humor which can be seen in your replies." }
         ], date, "Unnamed chat");
+
+        conversation.addMessage(message);
     } else {
         conversation = new Conversation(conversation.id, conversation.messages, conversation.dateCreated, conversation.name);
     }
-
-    conversation.addMessage(message);
 
     const response = await openai.chat.completions.create({
         messages: conversation.messages,

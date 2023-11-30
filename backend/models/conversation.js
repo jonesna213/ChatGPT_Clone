@@ -2,6 +2,7 @@
     Will be saved in the browser looking like...
     {
         id: 123,
+        name: "new chat",
         dateCreated: "11/18/2023", 
         messages: [
             {role: "system", content: "You are a helpful assistant."},
