@@ -6,5 +6,4 @@ const router = express.Router();
 
 router.post("/chat", conversationsController.chat);
 
-
 module.exports = router;

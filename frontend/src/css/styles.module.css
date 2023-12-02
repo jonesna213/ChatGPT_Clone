@@ -44,6 +44,21 @@
     padding-left: 1rem;
     padding-right: 1rem;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #555555 #333333;
+}
+
+/* For Chrome, Edge, and Safari */
+.scrollableConversation::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollableConversation::-webkit-scrollbar-track {
+    background-color: #333333;
+}
+
+.scrollableConversation::-webkit-scrollbar-thumb {
+    background-color: #555555;
 }
 
 .renameInput:focus {

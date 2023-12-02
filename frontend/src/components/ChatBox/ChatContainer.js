@@ -2,27 +2,54 @@ import Loading from "../../assets/Loading";
 import Robot from "../../assets/Robot";
 import User from "../../assets/User";
 import styles from "../../css/styles.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ChatContainer = ({ currentConversation, updateChats, setCurrentConversation }) => {
     const [userInput, setUserInput] = useState("");
     const [conversationStarted, setConversationStarted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const conversationRef = useRef(null);
 
+    /**
+     * Used for checking if the conversation is started as well as scrolling down
+     * in the conversation menu so the most recent chats are on the screen.
+     */
     useEffect(() => {
-        setConversationStarted(!!currentConversation);
-    }, [currentConversation]);
+      setConversationStarted(!!currentConversation);
+  
+      if (conversationRef.current) {
+        conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
+      }
+    }, [currentConversation, isLoading]);
 
+    /**
+     * Updates the userInput when a change occurs in the chat box
+     * 
+     * @param {string} value the value from the input element
+     */
     const inputChangeHandler = value => {
         setUserInput(value);
     }
 
+    /**
+     * Handles what happens when a message is sent.
+     * 
+     * @param {*} event default form event element
+     */
     const submitHandler = async event => {
         event.preventDefault();
 
+        //Incase its an empty message
+        if (userInput.length === 0) {
+            setUserInput("");
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+
+        //If its a new conversation, setup for a new one otherwise add new input to current conversation.
         if (!conversationStarted) {
-            console.log("test", currentConversation);
-            console.log("started", conversationStarted);
             setCurrentConversation({
                 messages: [
                     { role: "user", content: userInput }
@@ -35,16 +62,6 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
             updatedMessages.push({role: "user", content: userInput});
             updatedConvo.messages = updatedMessages;
             setCurrentConversation(updatedConvo);
-        }
-
-        setIsLoading(true);
-        console.log(userInput);
-
-        //Incase its an empty message
-        if (userInput.length === 0) {
-            setUserInput("");
-            setIsLoading(false);
-            return;
         }
 
         try {
@@ -66,8 +83,13 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
             localStorage.setItem("conversation", JSON.stringify(resData));
 
             const chats = JSON.parse(localStorage.getItem("chats")) || [];
-            console.log("chats", chats);
-            //if there are chats
+
+            /**
+             * If there are chats create a chats array and put the api response into it.
+             * 
+             * If there are no chats then either add onto the current conversation or add the new
+             * conversation to the chats array.
+             */
             if (chats.length !== 0) {
                 let updatedChats;
                 const isSaved = chats.find(convo => convo.id === resData.id);
@@ -94,7 +116,7 @@ const ChatContainer = ({ currentConversation, updateChats, setCurrentConversatio
     return (
         <section className="col bg-dark text-white d-flex flex-column justify-content-between">
             {conversationStarted && currentConversation ? (
-                <ul className={`list-unstyled mx-auto w-50 mt-5 ${styles.scrollableConversation}`}>
+                <ul ref={conversationRef} className={`list-unstyled mx-auto w-50 mt-5 ${styles.scrollableConversation}`}>
                     {currentConversation.messages.map(m => {
                         return (
                             <li key={m.content.length + Math.random()}>

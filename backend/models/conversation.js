@@ -11,7 +11,6 @@
         ]
     }
 */
-
 module.exports = class Conversation {
 
     constructor(id, messages, dateCreated, name) {

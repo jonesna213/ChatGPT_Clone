@@ -7,11 +7,21 @@ const App = () => {
     const [chats, setChats] = useState(JSON.parse(localStorage.getItem("chats")) || []);
     const [currentConversation, setCurrentConversation] = useState(null);
 
+    /**
+     * Updates the chats state as well as the local storage for it.
+     * 
+     * @param {Array} newChats an array of new chats 
+     */
     const updateChats = newChats => {
         setChats(newChats);
         localStorage.setItem("chats", JSON.stringify(newChats));
     };
 
+    /**
+     * Updates the currentConversation state as well as the local storage for it.
+     * 
+     * @param {object} conversation the conversation object
+     */
     const updateCurrentConversation = conversation => {
         setCurrentConversation(conversation);
         localStorage.setItem("conversation", JSON.stringify(conversation));

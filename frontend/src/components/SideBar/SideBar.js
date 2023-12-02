@@ -10,13 +10,20 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
     const [isRenameMenuOpen, setIsRenameMenuOpen] = useState(false);
     const [renameInput, setRenameInput] = useState(currentConversation ? currentConversation.name : "");
 
-    /*
-        Don't need to worry about ids because the ... only pops up for the current conversation
-    */
+    /**
+     * When the three dots is clicked on the current conversation it triggers this which either
+     * opens or closed the edit conversation pop up.
+     */
     const handleEditButtonClick = () => {
         setIsEditMenuOpen(!isEditMenuOpen);
     };
 
+    /**
+     * Depending on which button was clicked this function either deletes the conversation 
+     * or opens the rename menu for the user.
+     * 
+     * @param {string} option the option for which button was clicked
+     */
     const handleEditMenuOptionClick = option => {
         // Whichever option was clicked, either delete or open rename menu for the current conversation
         if (option === 'delete') {
@@ -30,6 +37,10 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
         setIsEditMenuOpen(false);
     };
 
+    /**
+     * Essentially makes the conversation name an input and allows the user to 
+     * type to rename the selected conversation.
+     */
     const openRenameMenu = () => {
         if (renameInput !== currentConversation.name) {
             const updatedChats = chats.map(convo => {
@@ -44,10 +55,21 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
         setIsRenameMenuOpen(false);
     }
 
-    const handleInputChange = event => {
-        setRenameInput(event.target.value);
+    /**
+     * Updates the rename input value when it changes.
+     * 
+     * @param {string} value the value from the rename input
+     */
+    const handleInputChange = value => {
+        setRenameInput(value);
     }
 
+    /**
+     * When the enter key is pressed it sets the conversation to the value of the 
+     * rename input and updates the chats array.
+     * 
+     * @param {*} event default event 
+     */
     const handleRenameSubmit = event => {
         if (event.key === "Enter") {
             const updatedChats = chats.map(convo => {
@@ -61,7 +83,7 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
             setIsRenameMenuOpen(false);
         }
     }
-
+    
     return (
         <section className="col-2 text-white h-100">
             <div className="m-3">
@@ -79,7 +101,7 @@ const SideBar = ({ updateChats, chats, setCurrentConversation, currentConversati
                                 {currentConversation && currentConversation.id === convo.id ? (
                                     <div className={`d-flex justify-content-between align-items-center ps-2 my-1 text-white ${styles.currentConversation}`}>
                                         {isRenameMenuOpen ? (
-                                            <input type="text" name="renameConversationInput" value={renameInput} onChange={handleInputChange} className={`${styles.renameInput} text-white`} onBlur={openRenameMenu} autoFocus onKeyDown={handleRenameSubmit} />
+                                            <input type="text" name="renameConversationInput" value={renameInput} onChange={event => { handleInputChange(event.target.value) }} className={`${styles.renameInput} text-white`} onBlur={openRenameMenu} autoFocus onKeyDown={handleRenameSubmit} />
                                         ) : (
                                             convo.name
                                         )}
