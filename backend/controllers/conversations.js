@@ -35,14 +35,21 @@ exports.chat = async (req, res, next) => {
         conversation = new Conversation(conversation.id, conversation.messages, conversation.dateCreated, conversation.name);
     }
 
-    //Call the api
-    const response = await openai.chat.completions.create({
-        messages: conversation.messages,
-        model: "gpt-3.5-turbo",
-        temperature: 0.7
-    });
+    try {
+        //Call the api
+        const response = await openai.chat.completions.create({
+            messages: conversation.messages,
+            model: "gpt-3.5-turbo",
+            temperature: 0.7
+        });
 
-    conversation.addMessage(response.choices[0].message);
+        conversation.addMessage(response.choices[0].message);
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 
     console.log("converstaion", conversation);
     res.send(conversation);
